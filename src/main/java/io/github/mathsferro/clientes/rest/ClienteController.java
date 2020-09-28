@@ -3,6 +3,7 @@ package io.github.mathsferro.clientes.rest;
 import io.github.mathsferro.clientes.model.entity.Cliente;
 import io.github.mathsferro.clientes.model.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -38,6 +39,23 @@ public class ClienteController {
                 .map( cliente -> {
                     repository.delete(cliente);
                     return cliente;
+                })
+                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT) // Não retorna nada
+    public Cliente updateClientById(@PathVariable("id") Integer id, @RequestBody Cliente clienteUpdated) {
+        return repository
+                .findById(id)
+                // se o map retornar vazio ele entra no Throw
+                .map( cliente -> {
+                    // Especificando os campos que serão atualizados
+                    cliente.setNome(clienteUpdated.getNome());
+                    cliente.setCpf(clienteUpdated.getCpf());
+                    // Ou tirar todos esses cliente.set e trocar pra linha abaixo
+                    //clienteUpdated.setId(cliente.getId());
+                    return repository.save(clienteUpdated);
                 })
                 .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
