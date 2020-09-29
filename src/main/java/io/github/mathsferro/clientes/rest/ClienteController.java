@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.Valid;
+
 @RestController // Serve para ser conhecida como Controllador Rest ou seja, que vai receber e enviar respostas HTTP Rest
 @RequestMapping("/api/clientes") // Mapear a URL base
 public class ClienteController {
@@ -22,13 +24,13 @@ public class ClienteController {
 
     @PostMapping // Mapeia esse método para uma requisição POST
     @ResponseStatus(HttpStatus.CREATED) // Mapear para o corpo da resposta em formato JSON
-    public Cliente addClient(@RequestBody Cliente cliente) { // Vai ser um JSON que vai vir do corpo da requisição por isso o @RequestBody
+    public Cliente addClient(@RequestBody @Valid Cliente cliente) { // Vai ser um JSON que vai vir do corpo da requisição por isso o @RequestBody
         return repository.save(cliente);
     }
 
     @GetMapping("{id}") // Essa anotação vai criar/será uma variável para utilizar no @PathVariable("id") ou só @PathVariable
     public Cliente getClientById(@PathVariable("id") Integer id) {
-        return repository.findById(id).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return repository.findById(id).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
     }
 
     @DeleteMapping("{id}")
@@ -40,12 +42,12 @@ public class ClienteController {
                     repository.delete(cliente);
                     return cliente;
                 })
-                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
     }
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT) // Não retorna nada
-    public Cliente updateClientById(@PathVariable("id") Integer id, @RequestBody Cliente clienteUpdated) {
+    public Cliente updateClientById(@PathVariable("id") Integer id, @RequestBody @Valid Cliente clienteUpdated) {
         return repository
                 .findById(id)
                 // se o map retornar vazio ele entra no Throw
@@ -53,11 +55,12 @@ public class ClienteController {
                     // Especificando os campos que serão atualizados
                     cliente.setNome(clienteUpdated.getNome());
                     cliente.setCpf(clienteUpdated.getCpf());
+
                     // Ou tirar todos esses cliente.set e trocar pra linha abaixo
                     //clienteUpdated.setId(cliente.getId());
                     return repository.save(clienteUpdated);
                 })
-                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
     }
 
 }
