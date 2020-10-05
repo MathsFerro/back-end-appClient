@@ -12,6 +12,9 @@ import javax.validation.Valid;
 
 @RestController // Serve para ser conhecida como Controllador Rest ou seja, que vai receber e enviar respostas HTTP Rest
 @RequestMapping("/api/clientes") // Mapear a URL base
+
+// Configurar o Cors
+@CrossOrigin("http://localhost:4200")
 public class ClienteController {
 
     @Autowired
