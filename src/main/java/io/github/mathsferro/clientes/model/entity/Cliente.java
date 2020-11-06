@@ -2,6 +2,7 @@ package io.github.mathsferro.clientes.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.br.CPF;
 
 import javax.persistence.*;

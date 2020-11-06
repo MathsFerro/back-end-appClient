@@ -3,12 +3,11 @@ package io.github.mathsferro.clientes.rest;
 import io.github.mathsferro.clientes.model.entity.Cliente;
 import io.github.mathsferro.clientes.model.repository.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController // Serve para ser conhecida como Controllador Rest ou seja, que vai receber e enviar respostas HTTP Rest
 @RequestMapping("/api/clientes") // Mapear a URL base
@@ -34,6 +33,11 @@ public class ClienteController {
     @GetMapping("{id}") // Essa anotação vai criar/será uma variável para utilizar no @PathVariable("id") ou só @PathVariable
     public Cliente getClientById(@PathVariable("id") Integer id) {
         return repository.findById(id).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+    }
+
+    @GetMapping
+    public List<Cliente> getAllClients() {
+        return repository.findAll();
     }
 
     @DeleteMapping("{id}")
